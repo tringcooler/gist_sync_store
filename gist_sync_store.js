@@ -9,7 +9,7 @@ var gss = (function () {
     };
     
     function gist_sync_store(gid = null, sid = null) {
-        var ccc = new cc(this);
+        /*var ccc = new cc(this);
         ccc.r(function () {
             ctx = this;
             ctx.this.gbs = new gist_base();
@@ -24,7 +24,7 @@ var gss = (function () {
         }
         this.gid = gid;
         this.sid = sid;
-        this.reload();
+        this.reload();*/
     }
     
     gist_sync_store.prototype.reload = function () {
