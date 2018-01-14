@@ -1,5 +1,5 @@
-// cc: current-continuation
-var coroutine = (function () {
+// current-continuation
+var cc = (function () {
     
     function coroutine (self) {
         this.pool = {};
@@ -7,12 +7,7 @@ var coroutine = (function () {
         this.pool.this = null;
         this.rets = {};
         this.ret_id = 0;
-        this.pool.__coroutine__ = this;
     }
-    
-    coroutine.prototype.pack = function () {
-        return [this, this.pool];
-    };
     
     coroutine.prototype.rpush = function (r) {
         var rid = ++this.ret_id;
@@ -24,10 +19,6 @@ var coroutine = (function () {
         var r = this.rets[rid];
         delete this.rets[rid];
         return r;
-    };
-    
-    coroutine.prototype.r = function () {
-        
     };
     
     coroutine.prototype.c = function (f) {
@@ -55,13 +46,18 @@ var coroutine = (function () {
     
 })();
 
-function test(a = null) {
-    var [cc, ctx] = new coroutine(this).pack();
-    ctx.c = 123;
-    console.log('c1', ctx.self, ctx.this, ctx.c);
-    if(a) {
-        cc = cc.r();
-        setTimeout(cc.w, 100);
-        ccc(ctx);
-    }
+/*
+function test() {
+    var ccc = new cc(this);
+    setTimeout(ccc.c(function (a, b, c) {
+        this.c = 123;
+        console.log('c1');
+    }), 100);
+    setTimeout(ccc.c(function (a, b, c) {
+        console.log('c2', this, this.this, this.c);
+    }), 100);
+    setTimeout(ccc.c((function (a, b, c) {
+        console.log('c3', this, this.this, this.c, a, b, c);
+    })).bind('abc', 1, 2, 3), 100);
 }
+*/
