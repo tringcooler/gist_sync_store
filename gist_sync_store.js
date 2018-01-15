@@ -2,11 +2,16 @@ var gss = (function () {
     
     gist_api_url = 'https://api.github.com/gists';
     
-    function gist_base() {}
+    function gist_base() {
+        this.headers = {
+            "Authorization": "Basic QlNvRFB1YjphMTExMTEx",
+        };
+    }
     
-    gist_base.prototype.create = function (suc) {
+    gist_base.prototype.create = function (suc = null) {
         $.ajax({
             type: "POST",
+            headers: this.headers,
             url: gist_api_url,
             data: JSON.stringify({
                 "description": "a gist sync store",
@@ -14,13 +19,38 @@ var gss = (function () {
                 "files": {
                     "entries.json": {
                         "content": "{}"
-                    }
+                    },
                 }
             }),
             success: function (data) {
                 console.log(data);
                 var gid = data.id;
-                suc(gid);
+                if(suc) suc(gid);
+            },
+            dataType: "json",
+        });
+    };
+    
+    gist_base.prototype.edit = function (gid, fdict, suc = null) {
+        var fls = {};
+        for(var fn in fdict) {
+            if(typeof(fdict[fn]) == "string") {
+                fls[fn] = {"content": fdict[fn]};
+            } else {
+                fls[fn] = fdict[fn];
+            }
+        }
+        $.ajax({
+            type: "PATCH",
+            headers: this.headers,
+            url: gist_api_url + '/' + gid,
+            data: JSON.stringify({
+                "description": "a gist sync store",
+                "files": fls,
+            }),
+            success: function (data) {
+                console.log(data);
+                if(suc) suc();
             },
             dataType: "json",
         });
@@ -51,6 +81,19 @@ var gss = (function () {
     
     gist_sync_store.prototype.reload = function () {
         this.store_pool = {};
+    };
+    
+    gist_sync_store.prototype.test = function () {
+        var ccc = new cc(this);
+        ccc.e(function () {
+            var ctx = this;
+            var rf = {}
+            for(var i = 0; i < 3000; i ++) {
+                var fn = 'tst' + i + '.txt';
+                rf[fn] = null; //'test';
+            }
+            ctx.self.gbs.edit(ctx.self.gid, rf);
+        });
     };
     
     return gist_sync_store;
