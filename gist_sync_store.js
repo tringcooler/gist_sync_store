@@ -8,7 +8,7 @@ var gss = (function () {
         };
     }
     
-    gist_base.prototype.create = function (suc = null) {
+    gist_base.prototype.create = function (suc = null, err = null) {
         $.ajax({
             type: "POST",
             headers: this.headers,
@@ -22,16 +22,18 @@ var gss = (function () {
                     },
                 }
             }),
-            success: function (data) {
-                console.log(data);
-                var gid = data.id;
-                if(suc) suc(gid);
-            },
             dataType: "json",
+        }).done(function (data, sta, xhr) {
+            console.log(data);
+            var gid = data.id;
+            if(suc) suc(gid);
+        }).fail(function (xhr, sta) {
+            console.log('err:', sta, xhr.status, xhr.statusText);
+            if(err) err(xhr.status);
         });
     };
     
-    gist_base.prototype.edit = function (gid, fdict, suc = null) {
+    gist_base.prototype.edit = function (gid, fdict, suc = null, err = null) {
         var fls = {};
         for(var fn in fdict) {
             if(typeof(fdict[fn]) == "string") {
@@ -48,11 +50,13 @@ var gss = (function () {
                 "description": "a gist sync store",
                 "files": fls,
             }),
-            success: function (data) {
-                console.log(data);
-                if(suc) suc();
-            },
             dataType: "json",
+        }).done(function (data, sta, xhr) {
+            console.log(data);
+            if(suc) suc();
+        }).fail(function (xhr, sta) {
+            console.log('err:', sta, xhr.status, xhr.statusText);
+            if(err) err(xhr.status);
         });
     };
     
@@ -88,9 +92,10 @@ var gss = (function () {
         ccc.e(function () {
             var ctx = this;
             var rf = {}
-            for(var i = 0; i < 3000; i ++) {
-                var fn = 'tst' + i + '.txt';
-                rf[fn] = null; //'test';
+            for(var i = 0; i < 3; i ++) {
+                var fn = '#tst' + i + '.txt';
+                //rf[fn] = '!test' + i;
+                rf[fn] = null;
             }
             ctx.self.gbs.edit(ctx.self.gid, rf);
         });

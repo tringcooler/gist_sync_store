@@ -13,7 +13,9 @@
 
 var gss;
 $(document).ready(function() {
-    tgss = new gss('83c775f1946ac8e5f267e28c6bcb1ea3');
+    var dft_gid = '83c775f1946ac8e5f267e28c6bcb1ea3';
+    tgss = new gss(dft_gid);
+    $('body').append($('<div>').append($('<a>').text('gist').attr('href', 'https://gist.github.com/' + dft_gid).attr('target', '_blank')));
 });
 
 </script>
