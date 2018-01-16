@@ -8,7 +8,7 @@ var gss = (function () {
         };
     }
     
-    gist_base.prototype.create = function (suc = null, err = null) {
+    gist_base.prototype.create = function (suc = null, err = null, timeout = 3, stt_rtry = 0) {
         $.ajax({
             type: "POST",
             headers: this.headers,
@@ -28,12 +28,14 @@ var gss = (function () {
             var gid = data.id;
             if(suc) suc(gid);
         }).fail(function (xhr, sta) {
+            if(stt_rtry < timeout) return self.create(suc, err, timeout, stt_rtry + 1);
             console.log('err:', sta, xhr.status, xhr.statusText);
             if(err) err(xhr.status);
         });
     };
     
-    gist_base.prototype.edit = function (gid, fdict, suc = null, err = null) {
+    gist_base.prototype.edit = function (gid, fdict, suc = null, err = null, timeout = 3, stt_rtry = 0) {
+        var self = this;
         var fls = {};
         for(var fn in fdict) {
             if(typeof(fdict[fn]) == "string") {
@@ -55,6 +57,7 @@ var gss = (function () {
             console.log(data);
             if(suc) suc();
         }).fail(function (xhr, sta) {
+            if(stt_rtry < timeout) return self.edit(gid, fdict, suc, err, timeout, stt_rtry + 1);
             console.log('err:', sta, xhr.status, xhr.statusText);
             if(err) err(xhr.status);
         });
