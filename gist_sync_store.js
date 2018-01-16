@@ -97,7 +97,7 @@ var gss = (function () {
             var rf = {}
             for(var i = 0; i < 3; i ++) {
                 var fn = '#tst' + i + '.txt';
-                //rf[fn] = '!test' + i;
+                //rf[fn] = '#test' + i;
                 rf[fn] = null;
             }
             ctx.self.gbs.edit(ctx.self.gid, rf);
